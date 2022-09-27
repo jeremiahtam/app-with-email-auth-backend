@@ -76,60 +76,14 @@ class UserController extends Controller
         $userInfo = $this->getUserInfoByEmail(new Request(['email' => $fields['email']]));
         $userId = $userInfo['data']->id;
 
-        //-----------------------------------------
-        //  create notification settings
-        //-----------------------------------------
-        $notificationSettings = new NotificationSettingsController;
-        //Check if user notification exists
-        $notificationSettingsNumRows = $notificationSettings->showUserNumRows($userId);
-
-        if ($notificationSettingsNumRows == 0) {
-            $userNotificationData = $notificationSettings->create($userId);
-            if ($userNotificationData['success'] == false) {
-                return [
-                    'success' => false,
-                    'message' => 'Could not create notification setings for user',
-                ];
-            }
-        }
-        //Get live status of user
-        $locationHistoryController = new LocationHistoryController;
-        $liveLocationStatusRequest = $locationHistoryController->liveStatus(new Request(['user_id' => $userId]));
-
-
-        if ($liveLocationStatusRequest['success'] == true) {
-            $liveLocationStatus = $liveLocationStatusRequest['data']['live'];
-        } else {
-            $liveLocationStatus = null;
-        }
-
-        //-----------------------------------------
-        //  create security message for user
-        //-----------------------------------------
-        $securityMessage = new SecurityMessageController;
-        //Check if user security message exists
-        $securityMessageNumRows = $securityMessage->showUserNumRows($userId);
-
-        if ($securityMessageNumRows == 0) {
-            $userSecurityMessageData = $securityMessage->create($userId);
-            if ($userSecurityMessageData['success'] == false) {
-                return [
-                    'success' => false,
-                    'message' => 'Could not create default security message for user',
-                ];
-            }
-        }
-
+        
         $response = [
             'success' => true,
             'message' => 'Successfully logged in',
-            'notification_settings' => isset($userNotificationData) ? $userNotificationData : 'already exists',
-            'security_message' => isset($userSecurityMessageData) ? $userSecurityMessageData : 'already exists',
             'data' => [
                 'token' => $token,
                 'email' => $fields['email'],
                 'userId' => $userId,
-                'liveLocationStatus' => $liveLocationStatus,
             ]
         ];
 
