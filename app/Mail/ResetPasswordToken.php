@@ -30,7 +30,7 @@ class ResetPasswordToken extends Mailable
      */
     public function build()
     {
-        return $this->from('do-not-reply@trackerapp.com', 'Tracker App')
+        return $this->from('do-not-reply@trackerapp.com', 'Mobile_App_Authentication')
             ->view('index')
             ->with([
                 'token' => $this->token,
